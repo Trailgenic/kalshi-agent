@@ -1,1 +1,15 @@
-.vercel
+﻿Kalshi.pem
+*.pem
+*.key
+Personal & Financial/
+AI Research & Reports/
+TrailGenic/
+Sleepgenic/
+Images/
+Software/
+Strategy/
+Misc/
+Github/
+sleepgenic-web/
+kalshi.js
+node_modules/
