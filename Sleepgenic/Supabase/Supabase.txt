@@ -1,0 +1,24 @@
+PW: Ellaskypilot2030?
+
+Project ID:  adtbqblgbnrzcfdviqmb
+
+Project URL:  https://adtbqblgbnrzcfdviqmb.supabase.co
+
+sb_publishable_8N9rSjnCzR0ym36BRuX-xA_xKkU835T
+
+sb_secret_vKh_d95WnNZPC_KR8vvEmQ_Q1lLzBtJ
+
+Admin for Mike:
+
+$2b$12$FAE4gnEhz5arv7MDXh40BeBxoyYThxybE8P6tTL3xX0UMwiSuHd4i
+
+PW: Ellaskypilot2030?
+
+NEXTAUTH_SECRET
+6sgAKGQ871SbkwXZnGaTwzlTz9tIKXVIOt0h4hUigg8=
+
+Admin for Charles:
+
+$2b$12$qVCCd/mCiyjmO0ufesBAe.S/FK0qxlClQ/xOBdtYBUQ9sW.fkmt0C
+Pw: TestPass123
+

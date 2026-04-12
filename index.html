@@ -1,0 +1,695 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalshi AI Trading Agent</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Berkeley Mono', 'Courier New', monospace; background: #0a0a0a; color: #e8e8e8; min-height: 100vh; }
+  
+  .header { padding: 20px 24px; border-bottom: 0.5px solid #222; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 13px; letter-spacing: 0.15em; color: #888; text-transform: uppercase; }
+  .logo span { color: #00ff88; }
+  .status-bar { display: flex; align-items: center; gap: 16px; font-size: 12px; color: #555; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #00ff88; display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
+  .status-dot.red { background: #ff4444; animation: none; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .main { display: grid; grid-template-columns: 300px 1fr 280px; height: calc(100vh - 57px); overflow: hidden; }
+
+  .panel { border-right: 0.5px solid #181818; overflow-y: auto; }
+  .panel:last-child { border-right: none; border-left: 0.5px solid #181818; }
+
+  .section-label { font-size: 10px; letter-spacing: 0.12em; color: #444; text-transform: uppercase; padding: 16px 16px 8px; }
+
+  /* Config Panel */
+  .config-group { padding: 8px 16px 16px; border-bottom: 0.5px solid #141414; }
+  .config-label { font-size: 11px; color: #555; margin-bottom: 6px; }
+  .config-input { width: 100%; background: #111; border: 0.5px solid #222; color: #e8e8e8; padding: 7px 10px; font-size: 12px; font-family: inherit; border-radius: 4px; outline: none; }
+  .config-input:focus { border-color: #00ff88; }
+  .config-row { display: flex; gap: 8px; }
+  .config-row .config-input { flex: 1; }
+
+  .btn { background: transparent; border: 0.5px solid #333; color: #888; padding: 7px 14px; font-size: 11px; font-family: inherit; letter-spacing: 0.08em; cursor: pointer; border-radius: 4px; text-transform: uppercase; transition: all 0.15s; }
+  .btn:hover { border-color: #555; color: #ccc; }
+  .btn.primary { border-color: #00ff88; color: #00ff88; }
+  .btn.primary:hover { background: #00ff8811; }
+  .btn.danger { border-color: #ff4444; color: #ff4444; }
+  .btn.danger:hover { background: #ff444411; }
+  .btn.full { width: 100%; margin-top: 8px; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+  .toggle-label { font-size: 12px; color: #777; }
+  .toggle { position: relative; width: 36px; height: 20px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: #222; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 0.5px solid #333; }
+  .toggle-slider:before { content:''; position: absolute; height: 14px; width: 14px; left: 2px; bottom: 2px; background: #555; border-radius: 50%; transition: 0.2s; }
+  .toggle input:checked + .toggle-slider { background: #00ff8822; border-color: #00ff88; }
+  .toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: #00ff88; }
+
+  /* Markets Panel */
+  .markets-header { padding: 16px; border-bottom: 0.5px solid #181818; display: flex; gap: 8px; align-items: center; }
+  .markets-header input { flex: 1; background: #111; border: 0.5px solid #222; color: #e8e8e8; padding: 6px 10px; font-size: 12px; font-family: inherit; border-radius: 4px; outline: none; }
+  .markets-header input:focus { border-color: #333; }
+
+  .market-card { padding: 12px 16px; border-bottom: 0.5px solid #111; cursor: pointer; transition: background 0.1s; }
+  .market-card:hover { background: #0f0f0f; }
+  .market-card.selected { background: #0d1a12; border-left: 2px solid #00ff88; }
+  .market-card.has-signal { border-left: 2px solid #ffd700; }
+  .market-title { font-size: 12px; color: #ccc; margin-bottom: 4px; line-height: 1.4; }
+  .market-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #444; }
+  .market-yes { color: #00ff88; font-weight: 500; }
+  .market-no { color: #ff6644; font-weight: 500; }
+  .signal-badge { font-size: 9px; letter-spacing: 0.1em; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
+  .signal-badge.buy { background: #00ff8822; color: #00ff88; border: 0.5px solid #00ff8844; }
+  .signal-badge.sell { background: #ff444422; color: #ff4444; border: 0.5px solid #ff444444; }
+  .signal-badge.hold { background: #ffd70022; color: #ffd700; border: 0.5px solid #ffd70044; }
+  .signal-badge.analyzing { background: #4488ff22; color: #4488ff; border: 0.5px solid #4488ff44; }
+
+  /* Center - Analysis + Log */
+  .center-panel { display: flex; flex-direction: column; border-right: none; }
+  .analysis-area { flex: 1; overflow-y: auto; padding: 16px; }
+  .log-area { height: 200px; border-top: 0.5px solid #181818; overflow-y: auto; padding: 12px 16px; }
+
+  .analysis-card { background: #0d0d0d; border: 0.5px solid #1a1a1a; border-radius: 6px; padding: 14px; margin-bottom: 12px; }
+  .analysis-card .market-name { font-size: 11px; color: #555; margin-bottom: 8px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .analysis-body { font-size: 12px; color: #aaa; line-height: 1.7; }
+  .analysis-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid #1a1a1a; }
+  .confidence-bar-wrap { flex: 1; height: 3px; background: #1a1a1a; border-radius: 2px; margin: 0 12px; }
+  .confidence-bar { height: 100%; border-radius: 2px; background: #00ff88; transition: width 0.5s; }
+  .confidence-bar.medium { background: #ffd700; }
+  .confidence-bar.low { background: #ff6644; }
+  .analysis-signal { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: #333; font-size: 12px; line-height: 2; }
+  .empty-state .icon { font-size: 28px; margin-bottom: 12px; opacity: 0.3; color: #00ff88; }
+
+  .log-line { font-size: 11px; color: #444; padding: 2px 0; font-family: inherit; }
+  .log-line .ts { color: #333; margin-right: 10px; }
+  .log-line.info { color: #555; }
+  .log-line.success { color: #00cc66; }
+  .log-line.warn { color: #cc9900; }
+  .log-line.error { color: #cc4444; }
+
+  /* Right - Positions */
+  .positions-panel {}
+  .metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px; border-bottom: 0.5px solid #141414; }
+  .metric { background: #0d0d0d; border: 0.5px solid #181818; border-radius: 4px; padding: 10px; }
+  .metric-val { font-size: 18px; font-weight: 500; color: #e8e8e8; }
+  .metric-val.green { color: #00ff88; }
+  .metric-val.red { color: #ff4444; }
+  .metric-lbl { font-size: 10px; color: #444; margin-top: 2px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .position-item { padding: 10px 16px; border-bottom: 0.5px solid #111; }
+  .pos-title { font-size: 11px; color: #888; margin-bottom: 5px; line-height: 1.4; }
+  .pos-row { display: flex; justify-content: space-between; font-size: 11px; }
+  .pos-side { color: #00ff88; }
+  .pos-side.no { color: #ff6644; }
+  .pos-pnl { }
+  .pos-pnl.pos { color: #00ff88; }
+  .pos-pnl.neg { color: #ff4444; }
+
+  .no-positions { padding: 24px 16px; text-align: center; font-size: 11px; color: #333; }
+
+  /* Scan progress */
+  .scan-progress { padding: 8px 16px; font-size: 11px; color: #444; border-bottom: 0.5px solid #141414; display: none; }
+  .scan-progress.active { display: block; }
+  .progress-bar-wrap { height: 2px; background: #181818; border-radius: 1px; margin-top: 6px; }
+  .progress-bar { height: 100%; background: #00ff88; border-radius: 1px; transition: width 0.3s; }
+
+  .alert-box { margin: 12px 16px; padding: 10px 12px; border-radius: 4px; font-size: 11px; line-height: 1.6; }
+  .alert-box.warn { background: #1a1400; border: 0.5px solid #443300; color: #aa8800; }
+  .alert-box.info { background: #001a33; border: 0.5px solid #003366; color: #4488ff; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Kalshi <span>//</span> AI Trading Agent</div>
+  <div class="status-bar">
+    <span id="agent-status"><span class="status-dot red" id="status-dot"></span>Agent offline</span>
+    <span id="clock">--:--:-- UTC</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT: Config -->
+  <div class="panel">
+    <div class="section-label">API Configuration</div>
+
+    <div class="config-group">
+      <div class="alert-box info">Connect your Kalshi API key below. Get one at <strong>kalshi.com â†’ Account â†’ API</strong>. Paper trading recommended first.</div>
+      <div class="config-label" style="margin-top:12px">API Key ID</div>
+      <input class="config-input" id="api-key-id" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+      <div class="config-label" style="margin-top:8px">Private Key (PEM)</div>
+      <textarea class="config-input" id="api-private-key" rows="4" placeholder="-----BEGIN RSA PRIVATE KEY-----&#10;...&#10;-----END RSA PRIVATE KEY-----" style="resize:vertical; font-size:10px"></textarea>
+      <div class="config-label" style="margin-top:8px">Environment</div>
+      <select class="config-input" id="api-env">
+        <option value="demo">Demo (paper trading)</option>
+        <option value="prod">Production</option>
+      </select>
+    </div>
+
+    <div class="section-label">Agent Settings</div>
+
+    <div class="config-group">
+      <div class="config-label">Max position size ($)</div>
+      <input class="config-input" id="max-pos" type="number" value="25" min="1" max="500" />
+      <div class="config-label" style="margin-top:8px">Min confidence threshold (%)</div>
+      <input class="config-input" id="min-confidence" type="number" value="72" min="50" max="95" />
+      <div class="config-label" style="margin-top:8px">Markets per scan (max 5)</div>
+      <input class="config-input" id="scan-interval" type="number" value="5" min="1" max="5" />
+      <div class="config-label" style="margin-top:8px">Daily loss limit ($)</div>
+      <input class="config-input" id="loss-limit" type="number" value="100" min="10" />
+    </div>
+
+    <div class="config-group">
+      <div class="toggle-row">
+        <span class="toggle-label">Auto-execute trades</span>
+        <label class="toggle"><input type="checkbox" id="auto-trade" /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Economic markets</span>
+        <label class="toggle"><input type="checkbox" id="cat-econ" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Political markets</span>
+        <label class="toggle"><input type="checkbox" id="cat-pol" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Crypto markets</span>
+        <label class="toggle"><input type="checkbox" id="cat-crypto" /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Sports markets</span>
+        <label class="toggle"><input type="checkbox" id="cat-sports" checked onchange="document.getElementById('sports-leagues-wrap').style.display=this.checked?'block':'none'" /><span class="toggle-slider"></span></label>
+      </div>
+      <div id="sports-leagues-wrap" style="margin-top:4px; display:block;">
+        <div class="config-label">Sports leagues (auto-loaded)</div>
+        <div id="sports-leagues-list" style="font-size:11px; color:#444; padding:6px 0; line-height:2;">
+          Connect API to load available leagues
+        </div>
+      </div>
+    </div>
+
+    <div class="config-group">
+      <button class="btn primary full" id="start-btn" onclick="startAgent()">Connect API</button>
+      <button class="btn danger full" id="stop-btn" onclick="stopAgent()" disabled>Stop Agent</button>
+    </div>
+
+    <div class="config-group">
+      <div class="alert-box info">Manual mode: Click "Scan Markets" to get AI recommendations. Review each signal and click Execute to place a trade manually. Auto-execute is off by default.</div>
+    </div>
+  </div>
+
+  <!-- CENTER: Analysis + Log -->
+  <div class="panel center-panel">
+    <div class="markets-header">
+      <input id="market-search" placeholder="Filter markets..." oninput="filterMarkets(this.value)" />
+      <button class="btn primary" onclick="triggerScan()" id="scan-btn">Scan Markets â†—</button>
+    </div>
+
+    <div class="scan-progress" id="scan-progress">
+      <span id="scan-label">Scanning markets...</span>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; height: calc(100% - 49px);">
+
+      <!-- Market list -->
+      <div style="border-right: 0.5px solid #141414; overflow-y: auto;" id="market-list">
+        <div class="section-label">Markets</div>
+        <div id="markets-container">
+          <div class="empty-state"><div class="icon">â—Ž</div>Start the agent to<br>scan available markets</div>
+        </div>
+      </div>
+
+      <!-- Analysis + log -->
+      <div style="display: flex; flex-direction: column; overflow: hidden;">
+        <div class="analysis-area" id="analysis-area">
+          <div class="empty-state"><div class="icon">â—ˆ</div>AI analysis will appear<br>here as markets are scanned</div>
+        </div>
+        <div class="log-area" id="log-area">
+          <div class="section-label" style="padding: 0 0 6px;">Activity Log</div>
+          <div id="log-container"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: Positions + P&L -->
+  <div class="panel positions-panel">
+    <div class="section-label">Portfolio</div>
+
+    <div class="metric-row">
+      <div class="metric"><div class="metric-val" id="m-pnl">$0.00</div><div class="metric-lbl">Today P&L</div></div>
+      <div class="metric"><div class="metric-val" id="m-trades">0</div><div class="metric-lbl">Trades</div></div>
+      <div class="metric"><div class="metric-val" id="m-balance">â€”</div><div class="metric-lbl">Balance</div></div>
+      <div class="metric"><div class="metric-val" id="m-cost">$0.00</div><div class="metric-lbl">API cost</div></div>
+    </div>
+
+    <div class="section-label">Open Positions</div>
+    <div id="positions-container">
+      <div class="no-positions">No open positions</div>
+    </div>
+
+    <div class="section-label" style="margin-top:8px">Trade History</div>
+    <div id="trade-history">
+      <div class="no-positions">No trades yet</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages';
+const KALSHI_DEMO = 'https://demo-api.kalshi.co/trade-api/v2';
+const KALSHI_PROD = 'https://trading-api.kalshi.com/trade-api/v2';
+
+let agentRunning = false;
+let scanTimer = null;
+let markets = [];
+let analyses = {};
+let positions = [];
+let tradeHistory = [];
+let todayPnl = 0;
+let tradeCount = 0;
+let wins = 0;
+let sessionToken = null;
+let totalInputTokens = 0;
+let totalOutputTokens = 0;
+
+function updateCostDisplay() {
+  const cost = (totalInputTokens * 0.000003) + (totalOutputTokens * 0.000015);
+  document.getElementById('m-cost').textContent = '$' + cost.toFixed(4);
+  if (cost > 8) document.getElementById('m-cost').style.color = '#ff4444';
+  else if (cost > 5) document.getElementById('m-cost').style.color = '#ffd700';
+}
+
+function log(msg, type='info') {
+  const container = document.getElementById('log-container');
+  const now = new Date();
+  const ts = now.toTimeString().slice(0,8);
+  const line = document.createElement('div');
+  line.className = `log-line ${type}`;
+  line.innerHTML = `<span class="ts">${ts}</span>${msg}`;
+  container.insertBefore(line, container.firstChild);
+  if (container.children.length > 200) container.removeChild(container.lastChild);
+}
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toUTCString().slice(17,25) + ' UTC';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function getKalshiBase() {
+  return document.getElementById('api-env').value === 'prod' ? KALSHI_PROD : KALSHI_DEMO;
+}
+
+async function kalshiRequest(path, method='GET', body=null) {
+  const keyId = document.getElementById('api-key-id').value.trim();
+  if (!keyId) throw new Error('No API key configured');
+
+  const url = '/api/kalshi?path=' + encodeURIComponent(path) + '&env=' + document.getElementById('api-env').value;
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Ignore': 'placeholder',
+  };
+
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+
+  const resp = await fetch(url, opts);
+  if (!resp.ok) {
+    const err = await resp.text();
+    throw new Error(`Kalshi API ${resp.status}: ${err.slice(0, 120)}`);
+  }
+  return resp.json();
+}
+
+let sportsFilters = null;
+let selectedLeagues = new Set();
+
+async function loadSportsFilters() {
+  try {
+    const data = await kalshiRequest('/sports-filters');
+    sportsFilters = data;
+    const leagues = data.sports || data.leagues || data.filters || [];
+    const wrap = document.getElementById('sports-leagues-list');
+
+    if (leagues.length === 0) {
+      wrap.textContent = 'No sports leagues available';
+      return;
+    }
+
+    wrap.innerHTML = '';
+    leagues.slice(0, 12).forEach(league => {
+      const slug = league.slug || league.id || league.name;
+      const label = league.display_name || league.name || slug;
+      selectedLeagues.add(slug);
+
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; align-items:center; gap:8px; padding:2px 0;';
+      row.innerHTML = `
+        <label class="toggle" style="transform:scale(0.8); transform-origin:left;">
+          <input type="checkbox" checked data-league="${slug}" onchange="toggleLeague('${slug}', this.checked)" />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size:11px; color:#666;">${label}</span>
+      `;
+      wrap.appendChild(row);
+    });
+
+    log(`Loaded ${leagues.length} sports leagues`, 'success');
+  } catch(e) {
+    document.getElementById('sports-leagues-list').textContent = 'Could not load leagues â€” will fetch all sports';
+    log(`Sports filters: ${e.message}`, 'warn');
+  }
+}
+
+function toggleLeague(slug, checked) {
+  if (checked) selectedLeagues.add(slug);
+  else selectedLeagues.delete(slug);
+}
+
+async function fetchMarkets() {
+  try {
+    const env = document.getElementById('api-env').value;
+    let all = [];
+    const series = ['KXNCAAMBGAME','KXNCAAWBGAME','KXNBAGAME','KXNHLGAME','KXMLBGAME','KXNFLGAME','KXNBASPREAD','KXMLBHR','KXNHLGOAL','KXMLBHRR','KXNHLFIRSTGOAL','KXMLBTB','KXMLBHIT','KXNHLAST'];
+    for (const s of series) {
+      try {
+        const r = await fetch('/api/kalshi?path=' + encodeURIComponent('/markets?status=open&limit=50&series_ticker=' + s) + '&env=' + env);
+        const d = await r.json();
+        if (d.markets?.length) all = all.concat(d.markets);
+      } catch(e) {}
+    }
+    if (all.length === 0) {
+      const r = await fetch('/api/kalshi?path=' + encodeURIComponent('/markets?status=open&limit=200') + '&env=' + env);
+      const d = await r.json();
+      all = (d.markets || []).filter(m => !m.ticker.includes('MULTIGAMEEXTENDED') && !m.ticker.includes('CROSSCATEGORY'));
+    }
+    const seen = new Set();
+    all = all.filter(m => { if (seen.has(m.ticker)) return false; seen.add(m.ticker); return true; });
+    markets = all;
+    renderMarkets();
+    log('Fetched ' + markets.length + ' markets', 'success');
+    return markets;
+  } catch(e) {
+    log('Market fetch failed: ' + e.message, 'error');
+    return [];
+  }
+}
+
+
+function renderMarkets(filter='') {
+  const container = document.getElementById('markets-container');
+  const filtered = markets.filter(m =>
+    !filter || m.title.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">â—Ž</div>No markets found</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  filtered.forEach(m => {
+    const analysis = analyses[m.ticker];
+    const card = document.createElement('div');
+    card.className = 'market-card' + (analysis ? ' has-signal' : '');
+    card.onclick = () => showAnalysis(m.ticker);
+
+    const yesPrice = m.yes_ask_dollars ? Math.round(parseFloat(m.yes_ask_dollars)*100) + 'Â¢' : m.yes_ask ? (m.yes_ask/100*100).toFixed(0)+'Â¢' : 'â€”';
+    const noPrice = m.no_ask_dollars ? Math.round(parseFloat(m.no_ask_dollars)*100) + 'Â¢' : m.no_ask ? (m.no_ask/100*100).toFixed(0)+'Â¢' : 'â€”';
+
+    let badge = '';
+    if (analysis) {
+      badge = `<span class="signal-badge ${analysis.signal}">${analysis.signal.toUpperCase()}</span>`;
+    }
+
+    card.innerHTML = `
+      <div class="market-title">${m.title}</div>
+      <div class="market-meta">
+        <span class="market-yes">Y ${yesPrice}Â¢</span>
+        <span class="market-no">N ${noPrice}Â¢</span>
+        ${badge}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function filterMarkets(val) {
+  renderMarkets(val);
+}
+
+async function analyzeMarket(market) {
+  const prompt = `You are an expert prediction market trader analyzing a Kalshi market.
+
+Market: "${market.title}"
+Yes price: ${market.yes_ask_dollars ? Math.round(parseFloat(market.yes_ask_dollars)*100) : market.yes_ask}Â¢  (probability implied)
+No price: ${market.no_ask_dollars ? Math.round(parseFloat(market.no_ask_dollars)*100) : market.no_ask}Â¢
+Volume 24h: ${market.volume_24h || 'unknown'}
+Close date: ${market.close_time || 'unknown'}
+Ticker: ${market.ticker}
+
+Based on current market pricing, your knowledge of this topic, and probability analysis:
+1. Is the market mispriced? Why?
+2. What is your edge estimate?
+3. Signal: BUY YES, BUY NO, or HOLD
+
+Respond in this exact JSON format (no markdown, just raw JSON):
+{
+  "signal": "buy" or "sell" or "hold",
+  "side": "yes" or "no",
+  "confidence": 0-100,
+  "edge": -10 to +30,
+  "reasoning": "2-3 sentence analysis",
+  "key_risk": "main risk in one sentence"
+}`;
+
+  try {
+    const response = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    // Track token usage
+    if (data.usage) {
+      totalInputTokens += data.usage.input_tokens || 0;
+      totalOutputTokens += data.usage.output_tokens || 0;
+      updateCostDisplay();
+    }
+    const text = data.content?.[0]?.text || '';
+    const cleaned = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+    parsed.marketTitle = market.title;
+    parsed.ticker = market.ticker;
+    parsed.yesPrice = market.yes_ask_dollars ? Math.round(parseFloat(market.yes_ask_dollars) * 100) : market.yes_ask;
+    parsed.noPrice = market.no_ask_dollars ? Math.round(parseFloat(market.no_ask_dollars) * 100) : market.no_ask;
+    parsed.timestamp = Date.now();
+    analyses[market.ticker] = parsed;
+    return parsed;
+  } catch(e) {
+    log(`Analysis failed for ${market.ticker}: ${e.message}`, 'error');
+    return null;
+  }
+}
+
+function showAnalysis(ticker) {
+  const analysis = analyses[ticker];
+  const market = markets.find(m => m.ticker === ticker);
+  if (!analysis) {
+    log(`No analysis yet for ${ticker}`, 'warn');
+    return;
+  }
+
+  const area = document.getElementById('analysis-area');
+  const existing = document.getElementById('analysis-' + ticker);
+  if (existing) {
+    existing.scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  const confClass = analysis.confidence >= 75 ? '' : analysis.confidence >= 60 ? 'medium' : 'low';
+  const card = document.createElement('div');
+  card.className = 'analysis-card';
+  card.id = 'analysis-' + ticker;
+
+  card.innerHTML = `
+    <div class="market-name">${ticker}</div>
+    <div style="font-size:13px; color:#ccc; margin-bottom:8px; line-height:1.4;">${analysis.marketTitle}</div>
+    <div class="analysis-body">${analysis.reasoning}</div>
+    <div style="font-size:11px; color:#555; margin-top:6px; font-style:italic">Risk: ${analysis.key_risk}</div>
+    <div class="analysis-footer">
+      <span class="analysis-signal signal-badge ${analysis.signal}">${analysis.signal.toUpperCase()} ${analysis.side?.toUpperCase() || ''}</span>
+      <div class="confidence-bar-wrap"><div class="confidence-bar ${confClass}" style="width:${analysis.confidence}%"></div></div>
+      <span style="font-size:11px; color:#555">${analysis.confidence}%</span>
+    </div>
+    ${analysis.signal !== 'hold' && analysis.confidence >= parseInt(document.getElementById('min-confidence').value) ? `
+    <div style="margin-top:10px; display:flex; gap:8px;">
+      <button class="btn primary" style="flex:1; font-size:10px" onclick="executeTrade('${ticker}', '${analysis.side}', ${analysis.yesPrice}, ${analysis.noPrice})">
+        Execute: ${analysis.signal.toUpperCase()} ${analysis.side?.toUpperCase()} @ ${analysis.side === 'yes' ? analysis.yesPrice : analysis.noPrice}Â¢
+      </button>
+      <button class="btn" style="font-size:10px" onclick="this.closest('.analysis-card').remove()">Dismiss</button>
+    </div>` : ''}
+  `;
+
+  if (area.querySelector('.empty-state')) area.innerHTML = '';
+  area.insertBefore(card, area.firstChild);
+}
+
+async function executeTrade(ticker, side, yesPrice, noPrice) {
+  const maxPos = parseInt(document.getElementById('max-pos').value);
+  const price = side === 'yes' ? yesPrice : noPrice;
+  if (!price || price <= 0) { log('Invalid price for ' + ticker, 'error'); return; }
+  const contracts = Math.max(1, Math.floor((maxPos * 100) / price));
+  const cost = (contracts * price / 100).toFixed(2);
+  const env = document.getElementById('api-env').value;
+  log('Executing: ' + side.toUpperCase() + ' ' + contracts + ' contracts of ' + ticker + ' @ ' + price + 'c (~$' + cost + ')', 'warn');
+  const order = { ticker, action: 'buy', side, type: 'limit', count: contracts };
+  if (side === 'yes') { order.yes_price_dollars = (price / 100).toFixed(2); }
+  else { order.no_price_dollars = (price / 100).toFixed(2); }
+  try {
+    const resp = await fetch('/api/kalshi?path=' + encodeURIComponent('/portfolio/orders') + '&env=' + env, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(order)
+    });
+    const result = await resp.json();
+    if (result.order) {
+      log('Order placed! ' + contracts + 'x ' + ticker + ' ' + side.toUpperCase(), 'success');
+      tradeCount++; document.getElementById('m-trades').textContent = tradeCount;
+    } else { log('Order failed: ' + JSON.stringify(result).slice(0, 150), 'error'); }
+  } catch(e) { log('Order failed: ' + e.message, 'error'); }
+}
+
+function renderPositions() {
+  const container = document.getElementById('positions-container');
+  if (positions.length === 0) {
+    container.innerHTML = '<div class="no-positions">No open positions</div>';
+    return;
+  }
+  container.innerHTML = positions.map(p => `
+    <div class="position-item">
+      <div class="pos-title">${p.title}</div>
+      <div class="pos-row">
+        <span class="pos-side ${p.side === 'no' ? 'no' : ''}">${p.side.toUpperCase()} Ã— ${p.contracts}</span>
+        <span class="pos-pnl ${p.pnl >= 0 ? 'pos' : 'neg'}">${p.pnl >= 0 ? '+' : ''}$${p.pnl.toFixed(2)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderHistory() {
+  const container = document.getElementById('trade-history');
+  if (tradeHistory.length === 0) {
+    container.innerHTML = '<div class="no-positions">No trades yet</div>';
+    return;
+  }
+  container.innerHTML = tradeHistory.slice(0, 20).map(t => `
+    <div class="position-item">
+      <div class="pos-title" style="font-size:10px; color:#444">${t.time} â€” ${t.ticker}</div>
+      <div class="pos-row">
+        <span class="pos-side ${t.side === 'no' ? 'no' : ''}">${t.side.toUpperCase()} ${t.contracts}x @ ${t.entryPrice}Â¢</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function triggerScan() {
+  if (markets.length === 0) {
+    log('Fetching markets first...', 'info');
+    await fetchMarkets();
+  }
+  if (markets.length === 0) {
+    log('No markets available to scan', 'error');
+    return;
+  }
+
+  const progress = document.getElementById('scan-progress');
+  const progBar = document.getElementById('prog-bar');
+  const label = document.getElementById('scan-label');
+  progress.classList.add('active');
+
+  const minConf = parseInt(document.getElementById('min-confidence').value);
+  const autoTrade = document.getElementById('auto-trade').checked;
+  const maxMarkets = Math.min(5, parseInt(document.getElementById('scan-interval').value) || 5);
+  // Shuffle markets so we get different ones each scan
+  const shuffled = [...markets].sort(() => Math.random() - 0.5);
+  const toAnalyze = shuffled.slice(0, maxMarkets);
+
+  for (let i = 0; i < toAnalyze.length; i++) {
+    const m = toAnalyze[i];
+    label.textContent = `Analyzing: ${m.title.slice(0, 50)}...`;
+    progBar.style.width = ((i / toAnalyze.length) * 100) + '%';
+
+    const analysis = await analyzeMarket(m);
+    if (analysis) {
+      log(`${m.ticker}: ${analysis.signal.toUpperCase()} ${analysis.side || ''} @ ${analysis.confidence}% confidence`, analysis.signal === 'hold' ? 'info' : 'success');
+
+      if (autoTrade && analysis.signal !== 'hold' && analysis.confidence >= minConf) {
+        log(`Auto-executing trade for ${m.ticker}...`, 'warn');
+        await executeTrade(m.ticker, analysis.side, m.yes_ask, m.no_ask);
+      }
+    }
+    renderMarkets(document.getElementById('market-search').value);
+    await new Promise(r => setTimeout(r, 800));
+  }
+
+  progBar.style.width = '100%';
+  label.textContent = `Scan complete â€” ${toAnalyze.length} markets analyzed`;
+  setTimeout(() => progress.classList.remove('active'), 3000);
+}
+
+async function startAgent() {
+  const keyId = document.getElementById('api-key-id').value.trim();
+  if (!keyId) {
+    alert('Please enter your Kalshi API Key ID first.');
+    return;
+  }
+
+  agentRunning = true;
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('stop-btn').disabled = false;
+  document.getElementById('status-dot').classList.remove('red');
+  document.getElementById('agent-status').innerHTML = '<span class="status-dot" id="status-dot"></span>Agent running';
+
+  log('Agent started', 'success');
+  log(`Config: max pos $${document.getElementById('max-pos').value}, min confidence ${document.getElementById('min-confidence').value}%`, 'info');
+
+  // Sports loaded via series-based fetchMarkets
+
+  await fetchMarkets();
+  await triggerScan();
+
+  log('Agent ready. Click "Scan Markets" to analyze and get recommendations.', 'success');
+}
+
+function stopAgent() {
+  agentRunning = false;
+  if (scanTimer) { clearInterval(scanTimer); scanTimer = null; }
+  document.getElementById('start-btn').disabled = false;
+  document.getElementById('stop-btn').disabled = true;
+  document.getElementById('status-dot').classList.add('red');
+  document.getElementById('agent-status').innerHTML = '<span class="status-dot red" id="status-dot"></span>Agent offline';
+  log('Agent stopped', 'warn');
+}
+</script>
+</body>
+</html>
+
+
+
+

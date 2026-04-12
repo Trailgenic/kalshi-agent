@@ -1,0 +1,143 @@
+<style>
+  .segment-chart {
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #ffffff;
+    margin: 24px 0;
+  }
+  .segment-chart .chart-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .segment-chart table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .segment-chart th {
+    padding: 12px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #888;
+    border-bottom: 1px solid #333;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .segment-chart th.right {
+    text-align: right;
+  }
+  .segment-chart td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #222;
+    font-size: 14px;
+  }
+  .segment-chart td.right {
+    text-align: right;
+  }
+  .segment-chart .segment-label {
+    font-weight: 500;
+    color: #ffffff;
+  }
+  .segment-chart .avg-ecc {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .segment-chart .ecc-high {
+    color: #4ade80;
+  }
+  .segment-chart .ecc-medium {
+    color: #facc15;
+  }
+  .segment-chart .ecc-low {
+    color: #f87171;
+  }
+  .segment-chart .high-pct {
+    color: #888;
+    font-variant-numeric: tabular-nums;
+  }
+  .segment-chart .bar-cell {
+    width: 35%;
+  }
+  .segment-chart .bar-container {
+    background-color: #222;
+    border-radius: 4px;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .segment-chart .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+</style>
+
+<div class="segment-chart">
+  <div class="chart-title">Segment Analysis — Average ECC by Category</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Segment</th>
+        <th class="right">Avg ECC</th>
+        <th class="bar-cell"></th>
+        <th class="right">High Capability %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="segment-label">Money Movement</td>
+        <td class="right avg-ecc ecc-high">74.4</td>
+        <td class="bar-cell">
+          <div class="bar-container">
+            <div class="bar-fill" style="width: 74.4%; background-color: #4ade80;"></div>
+          </div>
+        </td>
+        <td class="right high-pct">57%</td>
+      </tr>
+      <tr>
+        <td class="segment-label">Infrastructure</td>
+        <td class="right avg-ecc ecc-high">76.5</td>
+        <td class="bar-cell">
+          <div class="bar-container">
+            <div class="bar-fill" style="width: 76.5%; background-color: #4ade80;"></div>
+          </div>
+        </td>
+        <td class="right high-pct">50%</td>
+      </tr>
+      <tr>
+        <td class="segment-label">Fintech Platforms</td>
+        <td class="right avg-ecc ecc-low">59.4</td>
+        <td class="bar-cell">
+          <div class="bar-container">
+            <div class="bar-fill" style="width: 59.4%; background-color: #f87171;"></div>
+          </div>
+        </td>
+        <td class="right high-pct">25%</td>
+      </tr>
+      <tr>
+        <td class="segment-label">Processors</td>
+        <td class="right avg-ecc ecc-low">56.4</td>
+        <td class="bar-cell">
+          <div class="bar-container">
+            <div class="bar-fill" style="width: 56.4%; background-color: #f87171;"></div>
+          </div>
+        </td>
+        <td class="right high-pct">25%</td>
+      </tr>
+      <tr>
+        <td class="segment-label">Networks</td>
+        <td class="right avg-ecc ecc-low">47.0</td>
+        <td class="bar-cell">
+          <div class="bar-container">
+            <div class="bar-fill" style="width: 47%; background-color: #f87171;"></div>
+          </div>
+        </td>
+        <td class="right high-pct">17%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

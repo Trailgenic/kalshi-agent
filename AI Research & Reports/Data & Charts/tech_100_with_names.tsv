@@ -1,0 +1,101 @@
+Ticker	Company	Country	Market_Cap_Approx	Canonical_URL
+NVDA	NVIDIA	USA	$4.43T	https://www.nvidia.com
+AAPL	Apple	USA	$4.16T	https://www.apple.com
+GOOG	Alphabet (Google)	USA	$3.86T	https://www.google.com
+MSFT	Microsoft	USA	$3.58T	https://www.microsoft.com
+AMZN	Amazon	USA	$2.46T	https://www.amazon.com
+AVGO	Broadcom	USA	$1.82T	https://www.broadcom.com
+META	Meta Platforms	USA	$1.69T	https://www.meta.com
+TSM	TSMC	Taiwan	$1.54T	https://www.tsmc.com
+TSLA	Tesla	USA	$1.51T	https://www.tesla.com
+TCEHY	Tencent	China	$710B	https://www.tencent.com
+ORCL	Oracle	USA	$617B	https://www.oracle.com
+005930.KS	Samsung	South Korea	$492B	https://www.samsung.com
+NFLX	Netflix	USA	$432B	https://www.netflix.com
+ASML	ASML	Netherlands	$431B	https://www.asml.com
+PLTR	Palantir	USA	$428B	https://www.palantir.com
+BABA	Alibaba	China	$378B	https://www.alibaba.com
+AMD	AMD	USA	$355B	https://www.amd.com
+CSCO	Cisco	USA	$307B	https://www.cisco.com
+SAP	SAP	Germany	$290B	https://www.sap.com
+IBM	IBM	USA	$289B	https://www.ibm.com
+MU	Micron Technology	USA	$262B	https://www.micron.com
+000660.KS	SK Hynix	South Korea	$255B	https://www.skhynix.com
+CRM	Salesforce	USA	$250B	https://www.salesforce.com
+APP	AppLovin	USA	$230B	https://www.applovin.com
+AMAT	Applied Materials	USA	$215B	https://www.appliedmaterials.com
+SHOP	Shopify	Canada	$209B	https://www.shopify.com
+INTC	Intel	USA	$201B	https://www.intel.com
+LRCX	Lam Research	USA	$200B	https://www.lamresearch.com
+UBER	Uber	USA	$193B	https://www.uber.com
+QCOM	Qualcomm	USA	$190B	https://www.qualcomm.com
+INTU	Intuit	USA	$187B	https://www.intuit.com
+NOW	ServiceNow	USA	$179B	https://www.servicenow.com
+SONY	Sony	Japan	$169B	https://www.sony.com
+TXN	Texas Instruments	USA	$167B	https://www.ti.com
+PDD	PDD Holdings (Pinduoduo)	China	$167B	https://www.pinduoduo.com
+BKNG	Booking Holdings	USA	$167B	https://www.booking.com
+ANET	Arista Networks	USA	$161B	https://www.arista.com
+KLAC	KLA	USA	$160B	https://www.kla.com
+SU.PA	Schneider Electric	France	$154B	https://www.se.com
+ARM	Arm Holdings	UK	$151B	https://www.arm.com
+ADBE	Adobe	USA	$148B	https://www.adobe.com
+XIACF	Xiaomi	China	$143B	https://www.mi.com
+ADI	Analog Devices	USA	$138B	https://www.analog.com
+PANW	Palo Alto Networks	USA	$138B	https://www.paloaltonetworks.com
+CRWD	CrowdStrike	USA	$132B	https://www.crowdstrike.com
+HOOD	Robinhood	USA	$118B	https://www.robinhood.com
+SPOT	Spotify	Sweden	$117B	https://www.spotify.com
+MELI	MercadoLibre	Argentina	$109B	https://www.mercadolibre.com
+ADP	Automatic Data Processing	USA	$106B	https://www.adp.com
+2317.TW	Foxconn (Hon Hai)	Taiwan	$103B	https://www.foxconn.com
+DASH	DoorDash	USA	$98B	https://www.doordash.com
+8035.T	Tokyo Electron	Japan	$98B	https://www.tel.com
+6857.T	Advantest	Japan	$95B	https://www.advantest.com
+7974.T	Nintendo	Japan	$94B	https://www.nintendo.com
+CDNS	Cadence Design Systems	USA	$92B	https://www.cadence.com
+DELL	Dell	USA	$92B	https://www.dell.com
+NTES	NetEase	China	$90B	https://www.netease.com
+SNPS	Synopsys	USA	$89B	https://www.synopsys.com
+0981.HK	SMIC	China	$86B	https://www.smics.com
+MRVL	Marvell Technology	USA	$85B	https://www.marvell.com
+6861.T	Keyence	Japan	$85B	https://www.keyence.com
+2308.TW	Delta Electronics	Taiwan	$81B	https://www.deltaww.com
+SE	Sea Limited	Singapore	$81B	https://www.sea.com
+688256.SS	Cambricon Technologies	China	$81B	https://www.cambricon.com
+DELTA.BK	Delta Electronics (Thailand)	Thailand	$78B	https://www.deltathailand.com
+SNOW	Snowflake	USA	$78B	https://www.snowflake.com
+3690.HK	Meituan	China	$78B	https://www.meituan.com
+ABNB	Airbnb	USA	$76B	https://www.airbnb.com
+EQIX	Equinix	USA	$73B	https://www.equinix.com
+2454.TW	MediaTek	Taiwan	$73B	https://www.mediatek.com
+COIN	Coinbase	USA	$72B	https://www.coinbase.com
+NET	Cloudflare	USA	$71B	https://www.cloudflare.com
+TEL	TE Connectivity	Switzerland	$69B	https://www.te.com
+FTNT	Fortinet	USA	$66B	https://www.fortinet.com
+ADSK	Autodesk	USA	$65B	https://www.autodesk.com
+STX	Seagate Technology	Ireland	$60B	https://www.seagate.com
+PYPL	PayPal	USA	$60B	https://www.paypal.com
+WDAY	Workday	USA	$59B	https://www.workday.com
+NXPI	NXP Semiconductors	Netherlands	$58B	https://www.nxp.com
+IFX.DE	Infineon	Germany	$57B	https://www.infineon.com
+DDOG	Datadog	USA	$53B	https://www.datadoghq.com
+MSTR	Strategy (MicroStrategy)	USA	$52B	https://www.strategy.com
+CSU.TO	Constellation Software	Canada	$51B	https://www.csisoftware.com
+EA	Electronic Arts	USA	$51B	https://www.ea.com
+CPNG	Coupang	USA	$50B	https://www.coupang.com
+ADYEN.AS	Adyen	Netherlands	$50B	https://www.adyen.com
+6701.T	NEC	Japan	$49B	https://www.nec.com
+ROP	Roper Technologies	USA	$48B	https://www.ropertech.com
+TCOM	Trip.com	China	$47B	https://www.trip.com
+002371.SZ	NAURA Technology	China	$46B	https://www.naura.com
+TTWO	Take-Two Interactive	USA	$46B	https://www.take2games.com
+MPWR	Monolithic Power Systems	USA	$46B	https://www.monolithicpower.com
+JD	JD.com	China	$44B	https://www.jd.com
+RDDT	Reddit	USA	$44B	https://www.reddit.com
+BIDU	Baidu	China	$43B	https://www.baidu.com
+TEAM	Atlassian	Australia	$43B	https://www.atlassian.com
+FICO	FICO	USA	$43B	https://www.fico.com
+CRWV	CoreWeave	USA	$43B	https://www.coreweave.com
+VEEV	Veeva Systems	USA	$40B	https://www.veeva.com
+6981.T	Murata Manufacturing	Japan	$40B	https://www.murata.com

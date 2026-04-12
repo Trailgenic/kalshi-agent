@@ -1,0 +1,130 @@
+<style>
+  .posture-chart {
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #ffffff;
+    margin: 24px 0;
+  }
+  .posture-chart .chart-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .posture-chart table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .posture-chart th {
+    padding: 12px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #888;
+    border-bottom: 1px solid #333;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .posture-chart td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #222;
+    font-size: 14px;
+  }
+  .posture-chart .posture-label {
+    font-weight: 500;
+  }
+  .posture-chart .posture-open {
+    color: #4ade80;
+  }
+  .posture-chart .posture-defensive {
+    color: #facc15;
+  }
+  .posture-chart .posture-blocked {
+    color: #f87171;
+  }
+  .posture-chart .count {
+    color: #e0e0e0;
+    font-variant-numeric: tabular-nums;
+  }
+  .posture-chart .percent {
+    color: #888;
+    font-variant-numeric: tabular-nums;
+  }
+  .posture-chart .bar-cell {
+    width: 50%;
+  }
+  .posture-chart .bar-container {
+    background-color: #222;
+    border-radius: 4px;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .posture-chart .bar-fill-open {
+    background-color: #4ade80;
+    height: 100%;
+    border-radius: 4px;
+  }
+  .posture-chart .bar-fill-defensive {
+    background-color: #facc15;
+    height: 100%;
+    border-radius: 4px;
+  }
+  .posture-chart .bar-fill-blocked {
+    background-color: #f87171;
+    height: 100%;
+    border-radius: 4px;
+  }
+</style>
+
+<div class="posture-chart">
+  <div class="chart-title">Posture Distribution</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Posture</th>
+        <th>Count</th>
+        <th>% of 100</th>
+        <th class="bar-cell"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="posture-label posture-open">Open</td>
+        <td class="count">91</td>
+        <td class="percent">91%</td>
+        <td class="bar-cell">
+          <div class="bar-container">
+            <div class="bar-fill-open" style="width: 91%;"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="posture-label posture-defensive">Defensive</td>
+        <td class="count">3</td>
+        <td class="percent">3%</td>
+        <td class="bar-cell">
+          <div class="bar-container">
+            <div class="bar-fill-defensive" style="width: 3%;"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="posture-label posture-blocked">Blocked</td>
+        <td class="count">8</td>
+        <td class="percent">8%</td>
+        <td class="bar-cell">
+          <div class="bar-container">
+            <div class="bar-fill-blocked" style="width: 8%;"></div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top: 12px; padding: 10px; background-color: rgba(74, 222, 128, 0.1); border-radius: 6px; border-left: 3px solid #4ade80;">
+    <span style="color: #4ade80; font-size: 12px; font-weight: 500;">Most open vertical analyzed (91%)</span>
+    <span style="color: #888; font-size: 12px; margin-left: 8px;">— but openness does not equal clarity</span>
+  </div>
+</div>
